@@ -11,7 +11,8 @@ def main():
 
     if not response is None:
         power_outage_feed = gemini.process_advisory_with_ai(response["text"])
-        print(power_outage_feed)
+        broadcast.broadcast_to_telegram(power_outage_feed)
+        print("Message broadcasted successfully!")
     else:
         print("No Power Outage in Balamban")
 
