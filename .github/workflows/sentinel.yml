@@ -1,0 +1,38 @@
+name: Grid Sentinel Automation
+
+on:
+  schedule:
+    - cron: '0 */4 * * *' # Runs every 4 hours
+  workflow_dispatch: # Allows you to trigger it manually via the GitHub UI
+
+jobs:
+  run-sentinel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Execute Pipeline
+        env:
+          RSS_FEED_URL: ${{ secrets.RSS_FEED }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_API_KEY: ${{ secrets.TELEGRAM_BOT_API_KEY }}
+          CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        run: python main.py
+
+      - name: Commit State Update
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add last_alert.txt || true
+          git commit -m "chore: update tracking state [skip ci]" || true
+          git push || true
