@@ -23,7 +23,7 @@ jobs:
 
       - name: Execute Pipeline
         env:
-          RSS_FEED_URL: ${{ secrets.RSS_FEED }}
+          RSS_FEED: ${{ secrets.RSS_FEED }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_API_KEY: ${{ secrets.TELEGRAM_BOT_API_KEY }}
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
