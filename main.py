@@ -16,5 +16,11 @@ def main():
     else:
         print("No Power Outage in Balamban")
 
+    for alert in feed.fetch_yellow_red_alerts():
+        alert_message = gemini.process_alert_with_ai(alert["text"])
+        if alert_message != "SKIP_BROADCAST":
+            broadcast.broadcast_to_telegram(alert_message)
+            print("Grid alert broadcasted successfully!")
+
 if __name__ == "__main__":
     main()

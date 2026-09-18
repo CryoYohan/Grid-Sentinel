@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 RSS_FEED_URL = os.getenv("RSS_FEED")
+ALERTS_FEED_URL = os.getenv("ALERTS_FEED") or RSS_FEED_URL
 
 
 class RSSFeed:
@@ -38,6 +39,29 @@ class RSSFeed:
 
         print("✅ Grid is clear. No recent Balamban power interruption advisories found.")
         return None
+
+    def fetch_yellow_red_alerts(self):
+        """Return recent Yellow Alert and Red Alert entries from the alert feed."""
+        print("Fetching Yellow Alert and Red Alert feed...")
+
+        alert_feed = feedparser.parse(ALERTS_FEED_URL)
+        alert_keywords = ("yellow alert", "red alert")
+        alerts = []
+
+        for entry in alert_feed.entries[:5]:
+            text = entry.title + " " + getattr(entry, "summary", "")
+            if any(keyword in text.lower() for keyword in alert_keywords):
+                alerts.append({
+                    "url": entry.link,
+                    "text": text,
+                })
+
+        if alerts:
+            print(f"⚠️ Found {len(alerts)} grid alert(s).")
+        else:
+            print("✅ No recent Yellow Alert or Red Alert entries found.")
+
+        return alerts
 
 
 if __name__ == "__main__":

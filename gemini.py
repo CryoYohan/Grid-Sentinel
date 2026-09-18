@@ -46,6 +46,33 @@ class Gemini:
 
         return response.text.strip()
 
+    def process_alert_with_ai(self, raw_text):
+        current_date_str = datetime.now().strftime("%B %d, %Y")
+        prompt = f"""
+        You are the alert messaging engine for Grid Sentinel in Cebu, Philippines.
+
+        Today's date is: {current_date_str}
+
+        Rewrite the following official grid alert for a Telegram audience:
+        \"\"\"
+        {raw_text}
+        \"\"\"
+
+        Requirements:
+        - Preserve whether the alert is a Yellow Alert or Red Alert.
+        - Use concise, conversational Cebuano (Bisaya).
+        - Clearly state the alert level and the affected date or time when provided.
+        - Do not invent locations, causes, dates, or times.
+        - Output only the message, without commentary or metadata.
+        """
+
+        response = self.client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+        )
+
+        return response.text.strip()
+
 
     # if __name__ == "__main__":
     #     # The exact raw text output from your feed scraper
